@@ -291,6 +291,11 @@ function PrepareState:mousepressed(x, y, button)
         if x >= startBtnX and x <= startBtnX + startBtnW and y >= startBtnY and y <= startBtnY + startBtnH then
             if self.game and self.game.state and self.game.state.switch then
                 self.game.state:switch("game")
+                
+                if self.controlledHero then
+                    self.controlledHero:startTeleport()
+                    self.controlledHero = nil
+                end
             end
             return
         end

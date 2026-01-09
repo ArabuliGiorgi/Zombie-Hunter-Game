@@ -73,6 +73,15 @@ function Hero:startReturn()
     self.state = "walk"
 end
 
+function Hero:startTeleport()
+    -- teleport to original position
+    self.inControl = false
+    self.returning = false
+    self.state = "idle"
+    self.x = self.origX
+    self.y = self.origY
+end
+
 function Hero:update(dt)
     if self.isDead then
         local anim = self.animation.dead

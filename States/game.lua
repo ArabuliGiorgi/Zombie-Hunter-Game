@@ -46,13 +46,15 @@ function Game:new(game)
     self.waveManager = WaveManager:new()
     self.spawnManager = SpawnManager:new(self.waveManager)
     self.spawnManager.spawnDelay = 0.6
-    self.spawnManager:onSpawn(function(t,x,y)
+    self.spawnCallback = function(t,x,y)
         local z
         if t == 1 then z = Zombie1:new(x, y, self.currentWave*2) end
         if t == 2 then z = Zombie2:new(x, y, self.currentWave*3) end
         if t == 3 then z = Zombie3:new(x, y, self.currentWave*3 + 3) end
         if z then table.insert(self.zombies, z) end
-    end)
+    end
+
+    self.spawnManager:onSpawn(self.spawnCallback)
 
     return self
 end
@@ -73,13 +75,7 @@ function Game:enter()
         self.waveManager = WaveManager:new()
         self.spawnManager = SpawnManager:new(self.waveManager)
         self.spawnManager.spawnDelay = 0.6
-        self.spawnManager:onSpawn(function(t,x,y)
-            local z
-            if t == 1 then z = Zombie1:new(x, y, self.currentWave, {}) end
-            if t == 2 then z = Zombie2:new(x, y, self.currentWave, {}) end
-            if t == 3 then z = Zombie3:new(x, y, self.currentWave, {}) end
-            if z then table.insert(self.zombies, z) end
-        end)
+        self.spawnManager:onSpawn(self.spawnCallback)
 
         self.currentWave = 0
         self.game.reset = false
@@ -255,13 +251,16 @@ function Game:update(dt)
             end
 
             if bestHero then
-                -- set attack callback to damage the current target
-                z.onAttackHit = function()
-                    if bestHero and not bestHero.isDead then
-                        bestHero:takeDamage(z:getAttackDamage())
+                local targetHero = bestHero
+                local tx, ty = bestX, bestY
+                if z.state ~= "attack" then
+                    z.onAttackHit = function()
+                        if targetHero and not targetHero.isDead then
+                            targetHero:takeDamage(z:getAttackDamage())
+                        end
                     end
                 end
-                z:update(dt, bestX, bestY, bestHero)
+                z:update(dt, tx, ty, targetHero)
             else
                 z:update(dt, -1000, z.y, nil)
             end
