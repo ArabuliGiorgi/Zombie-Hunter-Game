@@ -28,10 +28,12 @@ end
 
 function Defeat:enter()
     Audio.stopMusic()
-    Audio.playMusic("Audio/defeat.mp3", 0.8)
+    if self.game.music then
+        Audio.playMusic("Audio/defeat.mp3", 0.8)
+    end
 
-    game.upgradeManager:ResetAll()
-    game.coins = 200  -- Reset coins to starting amount
+    self.game.upgradeManager:ResetAll()
+    self.game.coins = 200  -- Reset coins to starting amount
 end
 
 -- ======================

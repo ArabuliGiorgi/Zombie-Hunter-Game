@@ -68,7 +68,9 @@ end
 
 function Game:enter()
     Audio.stopMusic()
-    Audio.playMusic("Audio/gametheme.mp3", 0.8)
+    if self.game.music then
+        Audio.playMusic("Audio/gametheme.mp3", 0.8)
+    end
 
     if self.game.reset then
         -- Reset managers and state for fresh start

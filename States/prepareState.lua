@@ -48,7 +48,9 @@ end
 -- ======================
 function PrepareState:enter()
     Audio.stopMusic()
-    Audio.playMusic("Audio/gametheme.mp3", 0.8)
+    if self.game.music then
+        Audio.playMusic("Audio/gametheme.mp3", 0.8)
+    end
 
     if not self.game.reset then
         return

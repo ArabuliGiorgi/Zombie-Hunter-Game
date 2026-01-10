@@ -22,6 +22,7 @@ function love.load()
     -- Game state controller
     game.state = GameState:new()
     game.reset = false
+    game.music = true
 
     -- States
     game.mainMenu = MainMenu:new(game)

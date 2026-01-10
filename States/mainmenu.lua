@@ -16,6 +16,16 @@ function MainMenu:new(game)
     self.normalColor = {0.85, 0.85, 0.85}
     self.selectedColor = {1, 0.8, 0.2}
 
+    -- Music toggle button
+    self.musicButton = {
+        x = 15,
+        y = 0, -- calculated in draw (depends on screen height)
+        size = 48
+    }
+
+    self.volumeOnImage  = love.graphics.newImage("Images/volume-on.png")
+    self.volumeOffImage = love.graphics.newImage("Images/volume-off.png")
+
     -- Menu layout
     self.spacing = 45
     self.startY = 400
@@ -163,6 +173,30 @@ function MainMenu:draw()
 
     love.graphics.setColor(1, 1, 1)
 
+    -- ======================
+    -- MUSIC TOGGLE BUTTON
+    -- ======================
+    local b = self.musicButton
+    
+    b.y = h - b.size - 15
+
+    -- Red square background
+    love.graphics.setColor(0.7, 0.1, 0.1)
+    love.graphics.rectangle("fill", b.x, b.y, b.size, b.size, 8, 8)
+
+    -- Icon
+    love.graphics.setColor(1, 1, 1)
+    local icon = self.game.music and self.volumeOnImage or self.volumeOffImage
+
+    love.graphics.draw(
+        icon,
+        b.x + 6,
+        b.y + 6,
+        0,
+        (b.size - 12) / icon:getWidth(),
+        (b.size - 12) / icon:getHeight()
+    )
+
     if self.showTutorial then
         self:drawTutorialModal()
     end
@@ -216,6 +250,22 @@ end
 
 function MainMenu:mousepressed(x, y, button)
     if button ~= 1 then return end
+
+    -- Music toggle button
+    local b = self.musicButton
+    if x >= b.x and x <= b.x + b.size and
+       y >= b.y and y <= b.y + b.size then
+
+        self.game.music = not self.game.music
+
+        if self.game.music then
+            Audio.playMusic("Audio/menu.mp3", 1)
+        else
+            Audio.stopMusic()
+        end
+
+        return
+    end
 
     if self.showTutorial and self.tutorialButton then
         local b = self.tutorialButton
